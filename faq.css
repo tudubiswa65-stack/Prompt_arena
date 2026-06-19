@@ -554,7 +554,7 @@ a:focus-visible {
 }
 
 /* ============ RESPONSIVE ============ */
-@media (max-width: 1024px) {
+@media (max-width: 880px) {
   .content-grid { grid-template-columns: 1fr; }
   .sidebar { position: static; }
   .feature-strip { grid-template-columns: repeat(2, 1fr); }
@@ -580,4 +580,5 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .hero-art { animation: none; }
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }; animation-duration: 0.01ms !important; }
 }
