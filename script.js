@@ -4,14 +4,23 @@
    theme toggle, search focus shortcut.
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initHomePage() {
   initWaveform();
   initBookmarks();
   initChipFilter();
   initSearch();
   initLoadMore();
   initThemeToggle();
-});
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.home = initHomePage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHomePage, { once: true });
+} else {
+  initHomePage();
+}
 
 /* ---------------------------------------------------------------------
    Waveform — generate bars for the Audio Preset card's inline SVG

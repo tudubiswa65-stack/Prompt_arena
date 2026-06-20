@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initFaqPage() {
 
   const categories   = Array.from(document.querySelectorAll('.faq-category'));
   const topicItems   = Array.from(document.querySelectorAll('.topic-item'));
@@ -105,4 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-});
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.faq = initFaqPage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFaqPage, { once: true });
+} else {
+  initFaqPage();
+}

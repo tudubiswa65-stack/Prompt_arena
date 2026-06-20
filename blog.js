@@ -4,13 +4,22 @@
    grid/list view toggle, pagination clicks.
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initBlogPage() {
   initTopicFilter();
   initBlogSearch();
   initPostBookmarks();
   initViewToggle();
   initPagination();
-});
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.blog = initBlogPage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBlogPage, { once: true });
+} else {
+  initBlogPage();
+}
 
 /* ---------------------------------------------------------------------
    Topic pill filter — shows/hides posts by data-topic attribute

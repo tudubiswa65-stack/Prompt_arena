@@ -1,0 +1,44 @@
+#spa-loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 10, 0.42);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 9999;
+}
+
+#spa-loader.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#spa-loader .spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.95);
+  animation: spa-spin 0.8s linear infinite;
+}
+
+#spa-content {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+#spa-content.is-fading-out {
+  opacity: 0;
+}
+
+#spa-content.is-fading-in {
+  opacity: 1;
+}
+
+@keyframes spa-spin {
+  to { transform: rotate(360deg); }
+}

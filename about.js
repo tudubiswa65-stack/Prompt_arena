@@ -4,10 +4,19 @@
    smooth-scroll CTA buttons.
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initAboutPage() {
   initStatCounters();
   initCtaScroll();
-});
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.about = initAboutPage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAboutPage, { once: true });
+} else {
+  initAboutPage();
+}
 
 /* ---------------------------------------------------------------------
    Stat counters — animate "50K+", "10K+", etc. from 0 when the stats

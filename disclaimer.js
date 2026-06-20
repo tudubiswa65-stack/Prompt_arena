@@ -3,7 +3,7 @@
 // Standalone JS. No shared/external script dependencies.
 // ===========================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+function initDisclaimerPage() {
   const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
   const sections = tocLinks
     .map((link) => document.querySelector(link.getAttribute('href')))
@@ -51,4 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
       setActive(targetId);
     });
   });
-});
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.disclaimer = initDisclaimerPage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDisclaimerPage, { once: true });
+} else {
+  initDisclaimerPage();
+}
