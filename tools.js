@@ -6,7 +6,7 @@
    "more" chips, clear filters and pagination.
    ===================================================================== */
 
-(function () {
+function initToolsPage() {
   'use strict';
 
   /* ---------------------------------------------------------------
@@ -450,4 +450,14 @@
   }
 
   render();
-})();
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.tools = initToolsPage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initToolsPage, { once: true });
+} else {
+  initToolsPage();
+}
+

@@ -2,7 +2,7 @@
    IDEANAX — Contact Page JS
    =========================================================== */
 
-(function () {
+function initContactPage() {
   'use strict';
 
   /* ── Theme toggle ─────────────────────────────────────── */
@@ -228,4 +228,13 @@
   /* ── CTA & contact-support buttons ───────────────────── */
   // These are real mailto/anchor links — no extra JS needed, they work natively.
 
-})();
+}
+
+window.PageInitializers = window.PageInitializers || {};
+window.PageInitializers.contact = initContactPage;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initContactPage, { once: true });
+} else {
+  initContactPage();
+}
