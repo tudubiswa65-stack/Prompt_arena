@@ -1,7 +1,8 @@
 /* ==========================================================================
    mxo.me — AI Prompts Page
    Handles: prompt expand/collapse toggle, overflow detection,
-   clipboard copy (with fallback), bookmark toggle, logo animation.
+   clipboard copy (with fallback), bookmark toggle, logo animation,
+   pagination.
    ========================================================================== */
 
 function initPromptsPage() {
@@ -9,6 +10,7 @@ function initPromptsPage() {
   initPromptToggles();
   initCopyButtons();
   initBookmarks();
+  initPagination();
 }
 
 window.PageInitializers = window.PageInitializers || {};
@@ -42,7 +44,8 @@ function initPromptToggles() {
 
   toggles.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var promptText = btn.closest('.card-body').querySelector('.prompt-text');
+      var cardBody = btn.closest('.card-body');
+      var promptText = cardBody ? cardBody.querySelector('.prompt-text') : null;
       if (!promptText) return;
 
       // Collapse any other expanded prompts first
@@ -73,17 +76,101 @@ function initPromptToggles() {
 
   /* overflow check — show toggle only when text is actually truncated */
   requestAnimationFrame(function () {
-    setTimeout(function () {
-      document.querySelectorAll('.prompt-text').forEach(function (el) {
-        var isClamped = el.classList.contains('is-clamped');
-        var isOverflow = el.scrollHeight > el.clientHeight + 2;
-        var toggle = el.closest('.card-body').querySelector('.prompt-toggle');
-        if (toggle) {
-          toggle.classList.toggle('is-visible', isClamped && isOverflow);
-        }
-      });
-    }, 100);
+    setTimeout(updateToggleVisibility, 100);
   });
+}
+
+function updateToggleVisibility() {
+  document.querySelectorAll('.prompt-text').forEach(function (el) {
+    // Skip cards that are hidden by pagination (display: none)
+    if (el.offsetParent === null) return;
+    var isClamped = el.classList.contains('is-clamped');
+    var isOverflow = el.scrollHeight > el.clientHeight + 2;
+    var toggle = el.closest('.card-body').querySelector('.prompt-toggle');
+    if (toggle) {
+      toggle.classList.toggle('is-visible', isClamped && isOverflow);
+    }
+  });
+}
+
+/* -------------------------------------------------------------------------
+   Pagination
+   ---------------------------------------------------------------------- */
+function initPagination() {
+  var cards = document.querySelectorAll('.prompt-grid > .card');
+  var paginationNav = document.querySelector('.pagination');
+  if (!cards.length || !paginationNav) return;
+
+  var ITEMS_PER_PAGE = 6;
+  var totalPages = Math.ceil(cards.length / ITEMS_PER_PAGE);
+  var currentPage = 1;
+
+  function showPage(page) {
+    currentPage = page;
+    var start = (page - 1) * ITEMS_PER_PAGE;
+    var end = start + ITEMS_PER_PAGE;
+
+    cards.forEach(function (card, index) {
+      card.style.display = (index >= start && index < end) ? '' : 'none';
+    });
+
+    renderPaginationButtons();
+
+    // Re-run overflow check since newly shown cards need toggle visibility updated
+    requestAnimationFrame(function () {
+      setTimeout(updateToggleVisibility, 50);
+    });
+  }
+
+  function renderPaginationButtons() {
+    paginationNav.innerHTML = '';
+
+    // Previous button
+    var prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.setAttribute('aria-label', 'Previous page');
+    prevBtn.textContent = '‹';
+    prevBtn.disabled = currentPage === 1;
+    if (prevBtn.disabled) {
+      prevBtn.style.opacity = '0.4';
+      prevBtn.style.cursor = 'not-allowed';
+    }
+    prevBtn.addEventListener('click', function () {
+      if (currentPage > 1) showPage(currentPage - 1);
+    });
+    paginationNav.appendChild(prevBtn);
+
+    // Numbered page buttons
+    for (var i = 1; i <= totalPages; i++) {
+      var pageBtn = document.createElement('button');
+      pageBtn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+      pageBtn.setAttribute('aria-label', 'Page ' + i);
+      pageBtn.textContent = String(i);
+      pageBtn.addEventListener('click', (function (pageNum) {
+        return function () {
+          showPage(pageNum);
+        };
+      })(i));
+      paginationNav.appendChild(pageBtn);
+    }
+
+    // Next button
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.setAttribute('aria-label', 'Next page');
+    nextBtn.textContent = '›';
+    nextBtn.disabled = currentPage === totalPages;
+    if (nextBtn.disabled) {
+      nextBtn.style.opacity = '0.4';
+      nextBtn.style.cursor = 'not-allowed';
+    }
+    nextBtn.addEventListener('click', function () {
+      if (currentPage < totalPages) showPage(currentPage + 1);
+    });
+    paginationNav.appendChild(nextBtn);
+  }
+
+  showPage(1);
 }
 
 /* -------------------------------------------------------------------------
