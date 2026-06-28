@@ -45,6 +45,18 @@ function initPromptToggles() {
       var promptText = btn.closest('.card-body').querySelector('.prompt-text');
       if (!promptText) return;
 
+      // Collapse any other expanded prompts first
+      document.querySelectorAll('.prompt-text').forEach(function (pt) {
+        if (pt !== promptText && !pt.classList.contains('is-clamped')) {
+          pt.classList.add('is-clamped');
+          var otherBtn = pt.closest('.card-body').querySelector('.prompt-toggle');
+          if (otherBtn) {
+            otherBtn.textContent = 'View full prompt';
+            otherBtn.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+
       var isExpanded = !promptText.classList.contains('is-clamped');
 
       if (isExpanded) {
